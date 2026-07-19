@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Custom Theme ── */
+@theme {
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --color-bg-light: #fffcfc;
+  --color-bg-secondary-light: #fff5f8;
+  --color-accent-pink: #f472b6;
+  --color-light-pink: #fce7f3;
+  --color-text-primary-light: #1f2937;
+  --color-text-secondary-light: #6b7280;
+  --color-accent-teal: #2dd4bf;
+  --color-border-light: #f8dce8;
+
+  --color-bg-dark: #0f0f12;
+  --color-surface-dark: #18181b;
+  --color-card-dark: #202024;
+  --color-text-primary-dark: #ffffff;
+  --color-text-secondary-dark: #a1a1aa;
+  --color-border-dark: rgba(255, 255, 255, 0.08);
+
+  --radius-glass: 24px;
+  --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 20px 48px rgba(244, 114, 182, 0.12);
+  --shadow-card-hover: 0 24px 64px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Base Styles ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary-light);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.dark body,
+body.dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary-dark);
+}
+
+/* ── Glassmorphism Utility ── */
+.glass {
+  background: rgba(255, 252, 252, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border-light);
+}
+
+.dark .glass {
+  background: rgba(24, 24, 27, 0.6);
+  border-color: var(--color-border-dark);
+}
+
+/* ── Glass Card ── */
+.glass-card {
+  background: rgba(255, 252, 252, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-glass);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.dark .glass-card {
+  background: rgba(32, 32, 36, 0.7);
+  border-color: var(--color-border-dark);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glass);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent-pink);
+  border-radius: 3px;
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--color-accent-pink);
+  color: white;
+}
+
+/* ── Section Padding ── */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding: 0 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-container {
+    padding: 0 64px;
+  }
+}
