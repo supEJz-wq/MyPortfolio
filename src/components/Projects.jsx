@@ -12,9 +12,15 @@ import ventImg7 from '../assets/7.jpg'
 import ventImg8 from '../assets/8.jpg'
 import ventImg9 from '../assets/9.jpg'
 import ventImg10 from '../assets/10.jpg'
+import playGenImg11 from '../assets/11.jpg'
+import playGenImg12 from '../assets/12.jpg'
+import playGenImg13 from '../assets/13.jpg'
+import playGenImg14 from '../assets/14.jpg'
+import playGenImg15 from '../assets/15.jpg'
 
 const EDUVIBE_IMAGES = [eduVibeImg1, eduVibeImg2, eduVibeImg3, eduVibeImg4, eduVibeImg5, eduVibeImg6]
 const VENTSPACE_IMAGES = [ventImg7, ventImg8, ventImg9, ventImg10]
+const PLAYGEN_IMAGES = [playGenImg11, playGenImg12, playGenImg13, playGenImg14, playGenImg15]
 
 const PROJECTS = [
   {
@@ -22,6 +28,7 @@ const PROJECTS = [
     description:
       'EduVibe is a responsive learning management application that streamlines online education with secure authentication, course organization, and an intuitive user interface. Built with modern web technologies to deliver a fast and reliable user experience.',
     tags: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'Firebase'],
+    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
     images: EDUVIBE_IMAGES,
   },
   {
@@ -29,7 +36,16 @@ const PROJECTS = [
     description:
       'VentSpace is a safe and supportive platform where users can anonymously share thoughts, express emotions, and connect with a caring community. Designed to promote mental well-being through a clean, secure, and user-friendly experience.',
     tags: ['React', 'Tailwind', 'Supabase'],
+    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
     images: VENTSPACE_IMAGES,
+  },
+  {
+    title: 'PlayGen',
+    description:
+      'PlayGen is a QA automation toolkit that generates test scripts, automation frameworks, API requests, SQL queries, CI/CD pipelines, and testing documentation to streamline software testing.',
+    tags: ['React.js', 'JavaScript', 'Tailwind CSS', 'Git', 'GitHub'],
+    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
+    images: PLAYGEN_IMAGES,
   },
 
 ]
@@ -167,6 +183,27 @@ export default function Projects() {
                       }}
                     >
                       {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-5">
+                  <span
+                    className="text-xs font-semibold mr-1"
+                    style={{ color: dark ? '#A1A1AA' : '#6B7280' }}
+                  >
+                    Testing:
+                  </span>
+                  {project.testing.map((t) => (
+                    <span
+                      key={t}
+                      className="text-xs font-medium px-2.5 py-1 rounded-full"
+                      style={{
+                        backgroundColor: dark ? 'rgba(96,165,250,0.12)' : '#DBEAFE',
+                        color: '#3B82F6',
+                      }}
+                    >
+                      {t}
                     </span>
                   ))}
                 </div>
