@@ -1,8 +1,10 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { IconBrandGithub, IconDownload } from '@tabler/icons-react'
 import { useTheme } from '../context/ThemeContext'
 import darkmodeVideo from '../assets/darkmode.mp4'
 import lightmodeVideo from '../assets/lightmode.mp4'
+import picture1 from '../assets/picture1.png'
+import picture2 from '../assets/picture 2.png'
 
 const CODE_SNIPPET = `import { Quality, Dev } from 'passion'
 
@@ -169,67 +171,67 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="relative flex items-center justify-center"
           >
-            {/* Blush circle behind window */}
+            {/* Blush / Cyan aura circle behind photo */}
             <div
-              className="absolute w-[340px] h-[340px] rounded-full"
+              className="absolute w-[360px] h-[360px] sm:w-[420px] sm:h-[420px] rounded-full blur-2xl opacity-60 dark:opacity-40 transition-colors duration-500 pointer-events-none"
               style={{
-                background: 'radial-gradient(circle, rgba(244,114,182,0.2) 0%, transparent 70%)',
+                background: dark
+                  ? 'radial-gradient(circle, rgba(244,114,182,0.25) 0%, rgba(45,212,191,0.15) 50%, transparent 70%)'
+                  : 'radial-gradient(circle, rgba(244,114,182,0.3) 0%, rgba(248,220,232,0.4) 50%, transparent 70%)',
               }}
             />
 
-            {/* Code Window */}
+            {/* Portrait Image Card */}
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-sm sm:max-w-md rounded-3xl overflow-hidden p-2.5 sm:p-3 glass-card shadow-2xl backdrop-blur-xl border transition-all duration-500"
               style={{
-                backgroundColor: dark ? '#18181B' : '#FFFCFC',
-                border: dark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #F8DCE8',
+                backgroundColor: dark ? 'rgba(24, 24, 27, 0.7)' : 'rgba(255, 252, 252, 0.8)',
+                borderColor: dark ? 'rgba(244, 114, 182, 0.25)' : '#F8DCE8',
+                boxShadow: dark
+                  ? '0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(244,114,182,0.15)'
+                  : '0 20px 40px rgba(244,114,182,0.12), 0 0 20px rgba(248,220,232,0.4)',
               }}
             >
-              {/* Window Header */}
-              <div
-                className="flex items-center gap-2 px-4 py-3 border-b"
-                style={{
-                  backgroundColor: dark ? '#202024' : '#FFF5F8',
-                  borderColor: dark ? 'rgba(255,255,255,0.06)' : '#F8DCE8',
-                }}
-              >
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-[#FF5F56]" />
-                  <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                  <span className="w-3 h-3 rounded-full bg-[#27C93F]" />
-                </div>
-                <span
-                  className="text-xs font-medium ml-2 opacity-60"
-                  style={{ color: dark ? '#A1A1AA' : '#6B7280' }}
-                >
-                  portfolio.tsx
-                </span>
-              </div>
+              <div className="relative rounded-2xl overflow-hidden group">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={dark ? 'dark-img' : 'light-img'}
+                    src={dark ? picture1 : picture2}
+                    alt="Errol Profile"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.4 }}
+                    className="w-full h-[400px] sm:h-[460px] object-cover object-top rounded-2xl transition-transform duration-500 group-hover:scale-105"
+                  />
+                </AnimatePresence>
 
-              {/* Code Content */}
-              <div className="p-4 sm:p-6 overflow-x-auto">
-                <pre
-                  className="text-xs sm:text-sm leading-relaxed font-mono"
-                  style={{ color: dark ? '#E4E4E7' : '#374151' }}
+                {/* Glass Badge overlay on image */}
+                <div
+                  className="absolute bottom-4 left-4 right-4 p-3 rounded-xl backdrop-blur-md border flex items-center justify-between transition-colors duration-300"
+                  style={{
+                    backgroundColor: dark ? 'rgba(24, 24, 27, 0.75)' : 'rgba(255, 255, 255, 0.85)',
+                    borderColor: dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(244, 114, 182, 0.3)',
+                  }}
                 >
-                  <code>
-                    {CODE_SNIPPET.split('\n').map((line, i) => (
-                      <div key={i} className="whitespace-pre">
-                        {line.split(/(\{|\}|\(|\)|'[^']*'|=>)/g).map((part, j) => {
-                          if (part === 'import' || part === 'function' || part === 'const' || part === 'useState' || part === 'useEffect' || part === 'return')
-                            return <span key={j} className="text-[#C084FC]">{part}</span>
-                          if (part === '{' || part === '}' || part === '(' || part === ')' || part === '=>')
-                            return <span key={j} className="text-[#F472B6]">{part}</span>
-                          if (part.startsWith("'") && part.endsWith("'"))
-                            return <span key={j} className="text-[#2DD4BF]">{part}</span>
-                          return <span key={j}>{part}</span>
-                        })}
-                      </div>
-                    ))}
-                  </code>
-                </pre>
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#2DD4BF] animate-pulse" />
+                    <span
+                      className="text-xs font-semibold tracking-wide uppercase"
+                      style={{ color: dark ? '#F472B6' : '#E11D48' }}
+                    >
+                      {dark ? 'Dark Mode' : 'Light Mode'}
+                    </span>
+                  </div>
+                  <span
+                    className="text-xs font-medium opacity-80"
+                    style={{ color: dark ? '#A1A1AA' : '#4B5563' }}
+                  >
+                    Junior QA Tester
+                  </span>
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -238,3 +240,4 @@ export default function Hero() {
     </section>
   )
 }
+
