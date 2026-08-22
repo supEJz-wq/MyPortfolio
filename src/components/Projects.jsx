@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { IconBrandGithub, IconExternalLink, IconX, IconChevronLeft, IconChevronRight } from '@tabler/icons-react'
+import {
+  IconX,
+  IconChevronLeft,
+  IconChevronRight,
+  IconPhoto,
+  IconLayersSubtract,
+} from '@tabler/icons-react'
 import { useTheme } from '../context/ThemeContext'
 import eduVibeImg1 from '../assets/1.jpg'
 import eduVibeImg2 from '../assets/2.jpg'
@@ -24,68 +30,127 @@ const PLAYGEN_IMAGES = [playGenImg11, playGenImg12, playGenImg13, playGenImg14, 
 
 const PROJECTS = [
   {
+    id: 'eduvibe',
     title: 'EduVibe',
+    category: 'web-apps',
+    categoryLabel: 'Learning Management System',
     description:
-      'EduVibe is a responsive learning management application that streamlines online education with secure authentication, course organization, and an intuitive user interface. Built with modern web technologies to deliver a fast and reliable user experience.',
+      'EduVibe is a responsive learning management application that streamlines online education with secure authentication, course organization, and an intuitive user interface.',
     tags: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'Firebase'],
-    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
+    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'UI Testing'],
     images: EDUVIBE_IMAGES,
   },
   {
+    id: 'ventspace',
     title: 'VentSpace',
+    category: 'web-apps',
+    categoryLabel: 'Mental Health Community',
     description:
-      'VentSpace is a safe and supportive platform where users can anonymously share thoughts, express emotions, and connect with a caring community. Designed to promote mental well-being through a clean, secure, and user-friendly experience.',
-    tags: ['React', 'Tailwind', 'Supabase'],
-    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
+      'VentSpace is a safe, anonymous community platform where users share thoughts, express emotions, and connect. Built with modern full-stack technologies and tested for privacy and data integrity.',
+    tags: ['React', 'Tailwind CSS', 'Supabase', 'PostgreSQL'],
+    testing: ['Exploratory Testing', 'API Validation', 'SQL Verification', 'Regression Testing', 'E2E Testing'],
     images: VENTSPACE_IMAGES,
   },
   {
+    id: 'playgen',
     title: 'PlayGen',
+    category: 'qa-tools',
+    categoryLabel: 'QA Automation Toolkit',
     description:
-      'PlayGen is a QA automation toolkit that generates test scripts, automation frameworks, API requests, SQL queries, CI/CD pipelines, and testing documentation to streamline software testing.',
+      'PlayGen is a specialized QA automation toolkit that generates test scripts, automation frameworks, API requests, SQL queries, CI/CD pipelines, and testing documentation to streamline QA workflows.',
     tags: ['React.js', 'JavaScript', 'Tailwind CSS', 'Git', 'GitHub'],
-    testing: ['Manual Testing', 'Functional Testing', 'Smoke Testing', 'Sanity Testing', 'Regression Testing', 'End-to-End (E2E) Testing', 'User Interface (UI) Testing'],
+    testing: ['Test Case Generation', 'API Validation', 'UI Testing', 'Workflow Verification'],
     images: PLAYGEN_IMAGES,
   },
+]
 
+const FILTER_TABS = [
+  { id: 'all', label: 'All Projects' },
+  { id: 'web-apps', label: 'Web Applications' },
+  { id: 'qa-tools', label: 'QA & Tooling' },
 ]
 
 export default function Projects() {
   const { dark } = useTheme()
-  const [hoveredIndex, setHoveredIndex] = useState(null)
+  const [activeFilter, setActiveFilter] = useState('all')
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [currentProject, setCurrentProject] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(0)
-  const [lightboxImages, setLightboxImages] = useState([])
 
-  const openLightbox = (images, index) => {
-    setLightboxImages(images)
+  const filteredProjects = PROJECTS.filter((p) => {
+    if (activeFilter === 'all') return true
+    return p.category === activeFilter
+  })
+
+  const openLightbox = (project, index = 0) => {
+    setCurrentProject(project)
     setLightboxIndex(index)
     setLightboxOpen(true)
   }
 
+  const closeLightbox = useCallback(() => {
+    setLightboxOpen(false)
+  }, [])
+
+  const nextImage = useCallback(() => {
+    if (!currentProject) return
+    setLightboxIndex((prev) => (prev === currentProject.images.length - 1 ? 0 : prev + 1))
+  }, [currentProject])
+
+  const prevImage = useCallback(() => {
+    if (!currentProject) return
+    setLightboxIndex((prev) => (prev === 0 ? currentProject.images.length - 1 : prev - 1))
+  }, [currentProject])
+
+  // Keyboard navigation for Lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [lightboxOpen, nextImage, prevImage, closeLightbox])
+
   return (
-    <section id="projects" className="relative py-20 md:py-28">
+    <section id="projects" className="relative py-16 sm:py-20 md:py-28">
       <div className="section-container">
-        <div className="max-w-2xl mb-16">
-          <motion.p
+        {/* Section Header */}
+        <div className="max-w-2xl mb-8 sm:mb-12">
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-sm font-medium tracking-widest uppercase mb-3"
-            style={{ color: dark ? '#F472B6' : '#F472B6' }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3"
+            style={{
+              backgroundColor: dark ? 'rgba(244,114,182,0.1)' : 'rgba(244,114,182,0.15)',
+              color: dark ? '#F472B6' : '#BE123C',
+              border: `1px solid ${dark ? 'rgba(244,114,182,0.2)' : 'rgba(244,114,182,0.3)'}`,
+            }}
           >
-            Featured Work
-          </motion.p>
+            <IconLayersSubtract size={14} />
+            <span>Featured Work</span>
+          </motion.div>
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="font-heading text-3xl sm:text-4xl font-bold tracking-tight mb-6"
+            className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-5"
+            style={{ color: dark ? '#FFFFFF' : '#0F172A' }}
           >
-            Projects I've Built & Tested
+            Projects Built & Validated
           </motion.h2>
 
           <motion.p
@@ -93,208 +158,266 @@ export default function Projects() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg leading-relaxed"
-            style={{ color: dark ? '#A1A1AA' : '#6B7280' }}
+            className="text-sm sm:text-base md:text-lg leading-relaxed"
+            style={{ color: dark ? '#A1A1AA' : '#334155' }}
           >
-            A showcase of my work where I wore both hats: developing modern web applications and rigorously testing them to ensure a flawless user experience.
+            Showcasing applications developed and rigorously tested across end-to-end user flows, APIs, and edge cases.
           </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {PROJECTS.map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.15 + index * 0.12 }}
-              whileHover={{ y: -8, scale: 1.03 }}
-              className="group rounded-2xl overflow-hidden transition-all duration-500"
-              style={{
-                backgroundColor: dark ? '#202024' : '#FFFCFC',
-                borderColor: hoveredIndex === index
-                  ? '#F472B6'
-                  : (dark ? 'rgba(255,255,255,0.06)' : '#F8DCE8'),
-                borderWidth: '1px',
-                borderStyle: 'solid',
-                boxShadow: dark
-                  ? (hoveredIndex === index ? '0 20px 48px rgba(244,114,182,0.12)' : '0 4px 24px rgba(0,0,0,0.2)')
-                  : (hoveredIndex === index ? '0 20px 48px rgba(244,114,182,0.12)' : '0 4px 24px rgba(0,0,0,0.04)'),
-              }}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {project.images ? (
-                <div
-                  className="relative h-48 overflow-hidden cursor-pointer"
-                  onClick={() => openLightbox(project.images, 0)}
-                >
-                  <img
-                    src={project.images[0]}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      Click to view all {project.images.length} photos
-                    </span>
+        {/* Filter Tabs */}
+        <div className="flex flex-wrap gap-2 mb-8 sm:mb-12">
+          {FILTER_TABS.map((tab) => {
+            const isActive = activeFilter === tab.id
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveFilter(tab.id)}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? 'text-white shadow-md'
+                    : dark
+                    ? 'text-[#A1A1AA] hover:text-white bg-white/5 border border-white/10'
+                    : 'text-[#475569] hover:text-[#0F172A] bg-white border border-[#F8DCE8] shadow-xs'
+                }`}
+                style={{
+                  background: isActive
+                    ? dark
+                      ? 'linear-gradient(135deg, #F472B6 0%, #ec4899 100%)'
+                      : 'linear-gradient(135deg, #E11D48 0%, #DB2777 100%)'
+                    : undefined,
+                }}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                layout
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="group rounded-3xl overflow-hidden glass-card flex flex-col justify-between border"
+                style={{
+                  borderColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(244,114,182,0.25)',
+                  backgroundColor: dark ? 'rgba(32,32,36,0.75)' : 'rgba(255,255,255,0.95)',
+                }}
+              >
+                <div>
+                  {/* Image Showcase */}
+                  <div
+                    className="relative h-52 sm:h-56 overflow-hidden cursor-pointer bg-black/10"
+                    onClick={() => openLightbox(project, 0)}
+                  >
+                    <img
+                      src={project.images[0]}
+                      alt={project.title}
+                      className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+
+                    {/* Gradient Overlay & Photo Count Pill */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-bold text-white bg-black/60 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-sm">
+                      <IconPhoto size={14} />
+                      <span>{project.images.length} Photos</span>
+                    </div>
+
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
+                      <span className="text-xs font-semibold tracking-wide uppercase px-2.5 py-0.5 rounded-md bg-black/50 backdrop-blur-sm">
+                        {project.categoryLabel}
+                      </span>
+                      <span className="text-xs font-bold underline underline-offset-2 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                        View Gallery →
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="p-6">
+                    <h3
+                      className="font-heading text-xl font-bold mb-2 tracking-tight"
+                      style={{ color: dark ? '#FFFFFF' : '#0F172A' }}
+                    >
+                      {project.title}
+                    </h3>
+
+                    <p
+                      className="text-xs sm:text-sm leading-relaxed mb-5 line-clamp-3"
+                      style={{ color: dark ? '#A1A1AA' : '#334155' }}
+                    >
+                      {project.description}
+                    </p>
+
+                    {/* Tech Tags */}
+                    <div className="mb-4">
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-xs font-bold px-2.5 py-1 rounded-lg"
+                            style={{
+                              backgroundColor: dark ? 'rgba(244,114,182,0.1)' : 'rgba(244,114,182,0.12)',
+                              color: dark ? '#F472B6' : '#BE123C',
+                              border: `1px solid ${dark ? 'rgba(244,114,182,0.2)' : 'rgba(244,114,182,0.25)'}`,
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Testing Tags */}
+                    <div>
+                      <span
+                        className="block text-[11px] font-bold uppercase tracking-wider mb-2"
+                        style={{ color: dark ? '#2DD4BF' : '#0F766E' }}
+                      >
+                        Tested For:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.testing.map((t) => (
+                          <span
+                            key={t}
+                            className="text-[11px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1"
+                            style={{
+                              backgroundColor: dark ? 'rgba(45,212,191,0.1)' : 'rgba(13,148,136,0.1)',
+                              color: dark ? '#2DD4BF' : '#0F766E',
+                              border: `1px solid ${dark ? 'rgba(45,212,191,0.2)' : 'rgba(13,148,136,0.2)'}`,
+                            }}
+                          >
+                            <span>✓</span>
+                            <span>{t}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ) : (
+
+                {/* Card Action Footer */}
                 <div
-                  className="relative h-48 flex items-center justify-center overflow-hidden"
-                  style={{ background: dark ? project.darkGradient : project.gradient }}
+                  className="p-4 sm:p-6 pt-0 mt-2 border-t"
+                  style={{
+                    borderColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(244,114,182,0.15)',
+                  }}
                 >
-                  <span className="text-5xl sm:text-6xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
-                    {project.icon}
-                  </span>
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center gap-4"
+                  <button
+                    onClick={() => openLightbox(project, 0)}
+                    className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-2xs"
                     style={{
-                      background: 'rgba(244,114,182,0.1)',
-                      backdropFilter: 'blur(2px)',
+                      backgroundColor: dark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
+                      color: dark ? '#FFFFFF' : '#0F172A',
+                      border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(244,114,182,0.3)'}`,
                     }}
-                  />
-                </div>
-              )}
-
-              <div className="p-6">
-                <h3
-                  className="font-heading text-xl font-semibold mb-2 tracking-tight"
-                  style={{ color: dark ? '#fff' : '#1F2937' }}
-                >
-                  {project.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed mb-5"
-                  style={{ color: dark ? '#A1A1AA' : '#6B7280' }}
-                >
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-medium px-2.5 py-1 rounded-full"
-                      style={{
-                        backgroundColor: dark ? 'rgba(244,114,182,0.1)' : '#FCE7F3',
-                        color: '#F472B6',
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-5">
-                  <span
-                    className="text-xs font-semibold mr-1"
-                    style={{ color: dark ? '#A1A1AA' : '#6B7280' }}
                   >
-                    Testing:
-                  </span>
-                  {project.testing.map((t) => (
-                    <span
-                      key={t}
-                      className="text-xs font-medium px-2.5 py-1 rounded-full"
-                      style={{
-                        backgroundColor: dark ? 'rgba(96,165,250,0.12)' : '#DBEAFE',
-                        color: '#3B82F6',
-                      }}
-                    >
-                      {t}
-                    </span>
-                  ))}
+                    <IconPhoto size={16} className="text-[#DB2777] dark:text-[#F472B6]" />
+                    <span>Open Screenshots ({project.images.length})</span>
+                  </button>
                 </div>
-
-                <div className="flex gap-3">
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      className="flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-full transition-all duration-300 hover:scale-105"
-                      style={{
-                        backgroundColor: dark ? 'rgba(255,255,255,0.06)' : '#F3F4F6',
-                        color: dark ? '#E4E4E7' : '#374151',
-                      }}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <IconBrandGithub size={14} />
-                      GitHub
-                    </a>
-                  )}
-                  {project.live && (
-                    <a
-                      href={project.live}
-                      className="flex items-center gap-1.5 text-xs font-medium px-3.5 py-2 rounded-full transition-all duration-300 hover:scale-105"
-                      style={{
-                        backgroundColor: '#F472B6',
-                        color: '#fff',
-                      }}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <IconExternalLink size={14} />
-                      Live Demo
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 
+      {/* Enhanced Lightbox Modal */}
       <AnimatePresence>
-        {lightboxOpen && (
+        {lightboxOpen && currentProject && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/80 p-4"
-            onClick={() => setLightboxOpen(false)}
+            className="fixed inset-0 z-[9998] flex flex-col items-center justify-between bg-black/90 p-3 sm:p-6 backdrop-blur-md"
+            onClick={closeLightbox}
           >
-            <button
-              onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors z-10"
-            >
-              <IconX size={28} />
-            </button>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setLightboxIndex((prev) => (prev === 0 ? lightboxImages.length - 1 : prev - 1))
-              }}
-              className="absolute left-4 text-white/80 hover:text-white transition-colors z-10"
-            >
-              <IconChevronLeft size={36} />
-            </button>
-
-            <motion.img
-              key={lightboxIndex}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              src={lightboxImages[lightboxIndex]}
-              alt={`Screenshot ${lightboxIndex + 1}`}
-              className="max-w-full max-h-[85vh] rounded-lg object-contain"
+            {/* Modal Header */}
+            <div
+              className="w-full max-w-5xl flex items-center justify-between z-20 pb-3"
               onClick={(e) => e.stopPropagation()}
-            />
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setLightboxIndex((prev) => (prev === lightboxImages.length - 1 ? 0 : prev + 1))
-              }}
-              className="absolute right-4 text-white/80 hover:text-white transition-colors z-10"
             >
-              <IconChevronRight size={36} />
-            </button>
+              <div>
+                <h3 className="text-white text-base sm:text-lg font-bold">
+                  {currentProject.title} Screenshots
+                </h3>
+                <p className="text-white/60 text-xs">
+                  {lightboxIndex + 1} of {currentProject.images.length}
+                </p>
+              </div>
 
-            <div className="absolute bottom-4 text-white/60 text-sm">
-              {lightboxIndex + 1} / {lightboxImages.length}
+              <button
+                onClick={closeLightbox}
+                className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                aria-label="Close Lightbox"
+              >
+                <IconX size={24} />
+              </button>
+            </div>
+
+            {/* Main Image Stage */}
+            <div
+              className="relative w-full max-w-5xl flex-1 flex items-center justify-center my-auto min-h-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Previous Button */}
+              <button
+                onClick={prevImage}
+                className="absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-black/50 hover:bg-black/80 text-white border border-white/20 transition-all active:scale-95 cursor-pointer"
+                aria-label="Previous screenshot"
+              >
+                <IconChevronLeft size={28} />
+              </button>
+
+              <motion.img
+                key={lightboxIndex}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25 }}
+                src={currentProject.images[lightboxIndex]}
+                alt={`${currentProject.title} preview ${lightboxIndex + 1}`}
+                className="max-w-full max-h-[68vh] object-contain rounded-xl shadow-2xl border border-white/10"
+              />
+
+              {/* Next Button */}
+              <button
+                onClick={nextImage}
+                className="absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-black/50 hover:bg-black/80 text-white border border-white/20 transition-all active:scale-95 cursor-pointer"
+                aria-label="Next screenshot"
+              >
+                <IconChevronRight size={28} />
+              </button>
+            </div>
+
+            {/* Bottom Thumbnail Strip */}
+            <div
+              className="w-full max-w-2xl flex items-center justify-center gap-2 sm:gap-3 py-3 overflow-x-auto z-20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {currentProject.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setLightboxIndex(idx)}
+                  className={`relative w-12 h-10 sm:w-16 sm:h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                    lightboxIndex === idx
+                      ? 'border-[#F472B6] scale-105 shadow-md'
+                      : 'border-transparent opacity-60 hover:opacity-100'
+                  }`}
+                  aria-label={`Jump to screenshot ${idx + 1}`}
+                >
+                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
             </div>
           </motion.div>
         )}
@@ -302,3 +425,4 @@ export default function Projects() {
     </section>
   )
 }
+
