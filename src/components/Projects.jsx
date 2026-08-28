@@ -6,6 +6,9 @@ import {
   IconChevronRight,
   IconPhoto,
   IconLayersSubtract,
+  IconBrandGithub,
+  IconExternalLink,
+  IconWorld,
 } from '@tabler/icons-react'
 import { useTheme } from '../context/ThemeContext'
 import eduVibeImg1 from '../assets/1.jpg'
@@ -23,12 +26,30 @@ import playGenImg12 from '../assets/12.jpg'
 import playGenImg13 from '../assets/13.jpg'
 import playGenImg14 from '../assets/14.jpg'
 import playGenImg15 from '../assets/15.jpg'
+import shopSphereImg1 from '../assets/shopsphere1.jpg'
+import shopSphereImg2 from '../assets/shopsphere2.jpg'
+import shopSphereImg3 from '../assets/shopsphere3.jpg'
+import shopSphereImg4 from '../assets/shopsphere4.jpg'
 
 const EDUVIBE_IMAGES = [eduVibeImg1, eduVibeImg2, eduVibeImg3, eduVibeImg4, eduVibeImg5, eduVibeImg6]
 const VENTSPACE_IMAGES = [ventImg7, ventImg8, ventImg9, ventImg10]
 const PLAYGEN_IMAGES = [playGenImg11, playGenImg12, playGenImg13, playGenImg14, playGenImg15]
+const SHOPSPHERE_IMAGES = [shopSphereImg1, shopSphereImg2, shopSphereImg3, shopSphereImg4]
 
 const PROJECTS = [
+  {
+    id: 'shopsphere',
+    title: 'ShopSphere',
+    category: 'web-apps',
+    categoryLabel: 'E-Commerce Web Application',
+    description:
+      'A full-stack e-commerce web application developed to practice and demonstrate manual and automation testing, including functional, regression, UI, and API testing.',
+    tags: ['React', 'JavaScript', 'Tailwind CSS', 'Express.js', 'Supabase', 'Playwright', 'Postman'],
+    testing: ['Manual Testing', 'Automation Testing', 'Functional Testing', 'Regression Testing', 'UI Testing', 'API Testing'],
+    images: SHOPSPHERE_IMAGES,
+    github: 'https://github.com/supEJz-wq/shopSphere',
+    liveUrl: 'https://shop-sphere-neon-eta.vercel.app/',
+  },
   {
     id: 'eduvibe',
     title: 'EduVibe',
@@ -58,9 +79,11 @@ const PROJECTS = [
     categoryLabel: 'QA Automation Toolkit',
     description:
       'PlayGen is a specialized QA automation toolkit that generates test scripts, automation frameworks, API requests, SQL queries, CI/CD pipelines, and testing documentation to streamline QA workflows.',
-    tags: ['React.js', 'JavaScript', 'Tailwind CSS', 'Git', 'GitHub'],
-    testing: ['Test Case Generation', 'API Validation', 'UI Testing', 'Workflow Verification'],
+    tags: ['React.js', 'JavaScript', 'Tailwind CSS', 'Playwright', 'Git', 'GitHub'],
+    testing: ['Playwright Automation', 'Test Case Generation', 'API Validation', 'UI Testing', 'Workflow Verification'],
     images: PLAYGEN_IMAGES,
+    github: 'https://github.com/supEJz-wq/Playgen',
+    liveUrl: 'https://playgen-seven.vercel.app/',
   },
 ]
 
@@ -244,12 +267,55 @@ export default function Projects() {
 
                   {/* Card Content */}
                   <div className="p-6">
-                    <h3
-                      className="font-heading text-xl font-bold mb-2 tracking-tight"
-                      style={{ color: dark ? '#FFFFFF' : '#0F172A' }}
-                    >
-                      {project.title}
-                    </h3>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <h3
+                        className="font-heading text-xl font-bold tracking-tight"
+                        style={{ color: dark ? '#FFFFFF' : '#0F172A' }}
+                      >
+                        {project.title}
+                      </h3>
+
+                      <div className="flex items-center gap-1.5">
+                        {project.liveUrl && (
+                          <a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs text-white"
+                            style={{
+                              background: dark
+                                ? 'linear-gradient(135deg, #F472B6 0%, #DB2777 100%)'
+                                : 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
+                            }}
+                            title={`Visit ${project.title} Live Site`}
+                            aria-label={`Visit ${project.title} Live Site`}
+                          >
+                            <IconWorld size={14} />
+                            <span>Live</span>
+                            <IconExternalLink size={11} className="opacity-80" />
+                          </a>
+                        )}
+
+                        {project.github && (
+                          <a
+                            href={project.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-2xs"
+                            style={{
+                              backgroundColor: dark ? 'rgba(244,114,182,0.1)' : 'rgba(244,114,182,0.12)',
+                              color: dark ? '#F472B6' : '#BE123C',
+                              border: `1px solid ${dark ? 'rgba(244,114,182,0.25)' : 'rgba(244,114,182,0.3)'}`,
+                            }}
+                            title={`View ${project.title} on GitHub`}
+                            aria-label={`View ${project.title} repository on GitHub`}
+                          >
+                            <IconBrandGithub size={14} />
+                            <span>Repo</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
 
                     <p
                       className="text-xs sm:text-sm leading-relaxed mb-5 line-clamp-3"
@@ -307,22 +373,60 @@ export default function Projects() {
 
                 {/* Card Action Footer */}
                 <div
-                  className="p-4 sm:p-6 pt-0 mt-2 border-t"
+                  className="p-4 sm:p-6 pt-0 mt-2 border-t flex flex-wrap items-center gap-2"
                   style={{
                     borderColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(244,114,182,0.15)',
                   }}
                 >
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 min-w-[110px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-sm text-white"
+                      style={{
+                        background: dark
+                          ? 'linear-gradient(135deg, #F472B6 0%, #DB2777 100%)'
+                          : 'linear-gradient(135deg, #E11D48 0%, #BE123C 100%)',
+                      }}
+                    >
+                      <IconWorld size={16} />
+                      <span>Visit Site</span>
+                      <IconExternalLink size={13} className="opacity-80" />
+                    </a>
+                  )}
+
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 min-w-[100px] py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-2xs"
+                      style={{
+                        backgroundColor: dark ? 'rgba(255,255,255,0.06)' : '#FFFFFF',
+                        color: dark ? '#FFFFFF' : '#0F172A',
+                        border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(244,114,182,0.35)'}`,
+                      }}
+                    >
+                      <IconBrandGithub size={16} />
+                      <span>GitHub</span>
+                    </a>
+                  )}
+
                   <button
                     onClick={() => openLightbox(project, 0)}
-                    className="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer active:scale-98 shadow-2xs"
+                    className={`${
+                      project.liveUrl || project.github ? 'w-auto px-3' : 'w-full px-4'
+                    } py-2.5 rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 shadow-2xs`}
                     style={{
                       backgroundColor: dark ? 'rgba(255,255,255,0.05)' : '#FFFFFF',
                       color: dark ? '#FFFFFF' : '#0F172A',
                       border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(244,114,182,0.3)'}`,
                     }}
+                    title="Open Screenshots Gallery"
                   >
                     <IconPhoto size={16} className="text-[#DB2777] dark:text-[#F472B6]" />
-                    <span>Open Screenshots ({project.images.length})</span>
+                    <span>{project.liveUrl || project.github ? project.images.length : `Open Screenshots (${project.images.length})`}</span>
                   </button>
                 </div>
               </motion.div>
@@ -355,13 +459,41 @@ export default function Projects() {
                 </p>
               </div>
 
-              <button
-                onClick={closeLightbox}
-                className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
-                aria-label="Close Lightbox"
-              >
-                <IconX size={24} />
-              </button>
+              <div className="flex items-center gap-2 sm:gap-3">
+                {currentProject.liveUrl && (
+                  <a
+                    href={currentProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-[#F472B6] to-[#DB2777] text-white shadow-sm hover:opacity-90 transition-opacity"
+                  >
+                    <IconWorld size={15} />
+                    <span>Visit Live Site</span>
+                    <IconExternalLink size={13} className="opacity-80" />
+                  </a>
+                )}
+
+                {currentProject.github && (
+                  <a
+                    href={currentProject.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors shadow-sm"
+                  >
+                    <IconBrandGithub size={15} />
+                    <span className="hidden sm:inline">View on</span> GitHub
+                    <IconExternalLink size={13} className="opacity-80" />
+                  </a>
+                )}
+
+                <button
+                  onClick={closeLightbox}
+                  className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                  aria-label="Close Lightbox"
+                >
+                  <IconX size={24} />
+                </button>
+              </div>
             </div>
 
             {/* Main Image Stage */}
